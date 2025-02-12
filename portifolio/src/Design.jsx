@@ -1,33 +1,41 @@
-// Contato.jsx
-import React, { useState, useMemo, useEffect } from 'react';
+// Design.jsx
+import React, { useState, useEffect } from 'react';
+import thumbTodoroki from './thumb_todoroki.jpg';
+import thumbYone from './thumb_yone.jpg';
+import thumbGraves from './thumb_graves.png';
 
-function Contato() {
-  // --------------------
-  // Estados de "copiado"
-  // --------------------
-  const [copiedEmail, setCopiedEmail] = useState(false);
-  const [copiedDiscord, setCopiedDiscord] = useState(false);
+function Stars({ isDark }) {
+  const numStars = 100;
+  const stars = Array.from({ length: numStars }, (_, i) => ({
+    id: i,
+    top: Math.random() * 100,
+    left: Math.random() * 100,
+    size: Math.random() * 2 + 1,
+    animationDelay: Math.random() * 2,
+  }));
 
-  // --------------------
-  // Tema (Lua/Sol) - Lê do localStorage
-  // --------------------
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') !== 'light';
-    }
-    return true;
-  });
+  return (
+    <div className="stars-container">
+      {stars.map(star => (
+        <div
+          key={star.id}
+          className="star"
+          style={{
+            top: `${star.top}%`,
+            left: `${star.left}%`,
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            animationDelay: `${star.animationDelay}s`,
+            backgroundColor: isDark ? 'white' : 'black', // Inverte a cor conforme o tema
+          }}
+        ></div>
+      ))}
+    </div>
+  );
+}
 
-  // Atualiza localStorage quando o tema mudar
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    }
-  }, [isDark]);
-
-  // --------------------
-  // Idioma (Brasil/EUA) - Lê do localStorage
-  // --------------------
+function Design() {
+  // Lê do localStorage o idioma
   const [isEnglish, setIsEnglish] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('language') === 'en';
@@ -35,48 +43,37 @@ function Contato() {
     return false;
   });
 
-  // Atualiza localStorage quando o idioma mudar
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('language', isEnglish ? 'en' : 'pt');
     }
   }, [isEnglish]);
 
-  // --------------------
-  // Rota atual: /contato?
-  // --------------------
+  // Tema (true = dark, false = light)
+  // Se houver um valor salvo em localStorage, usaremos ele para definir o tema inicial.
+  const [isDark, setIsDark] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') !== 'light'; // Se não for 'light', assume dark
+    }
+    return true;
+  });
+
+  // Sempre que mudar o tema, salva a escolha no localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+  }, [isDark]);
+
+  // Detecta a rota atual para destacar o link ativo
   const [currentPath, setCurrentPath] = useState("");
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       setCurrentPath(window.location.pathname);
     }
   }, []);
-  const isContactPage = currentPath === "/contato";
-
-  // --------------------
-  // Funções de copiar
-  // --------------------
-  const copyEmail = () => {
-    navigator.clipboard.writeText("emailpessoalgustavo06@gmail.com")
-      .then(() => {
-        setCopiedEmail(true);
-        setTimeout(() => setCopiedEmail(false), 2000);
-      })
-      .catch(() => {
-        // Trate o erro se necessário
-      });
-  };
-
-  const copyDiscord = () => {
-    navigator.clipboard.writeText("@freakysz")
-      .then(() => {
-        setCopiedDiscord(true);
-        setTimeout(() => setCopiedDiscord(false), 2000);
-      })
-      .catch(() => {
-        // Trate o erro se necessário
-      });
-  };
+  const isHomePage = currentPath === "/";
+  const isDesignPage = currentPath === "/design";
 
   return (
     <>
@@ -117,70 +114,7 @@ function Contato() {
           }
 
           /* =========================
-             Fade-in
-             ========================= */
-          .fade-in {
-            animation: fadeIn 1.5s ease-out both;
-          }
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-
-          /* =========================
-             Ícones de Contato
-             ========================= */
-          .contact-icon {
-            width: 8rem;
-            height: 8rem;
-          }
-          .icon-bg {
-            background: #1f2937; /* gray-800 */
-            border-radius: 9999px;
-          }
-          .tooltip {
-            position: absolute;
-            bottom: -2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            white-space: nowrap;
-          }
-          .group:hover .tooltip {
-            opacity: 1;
-          }
-          .copied-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 9999px;
-            z-index: 10;
-            font-size: 1rem;
-            animation: copyAnimation 2s ease-out;
-          }
-          @keyframes copyAnimation {
-            0% { opacity: 0; transform: scale(0.8); }
-            20% { opacity: 1; transform: scale(1.1); }
-            80% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1); }
-          }
-
-          /* =========================
-             Header e Navegação - Dark
+             Neon Dark
              ========================= */
           .neon-border {
             border: 1px solid #ffffff;
@@ -194,6 +128,23 @@ function Contato() {
             color: #ffffff;
             text-shadow: 0 0 8px #ffffff, 0 0 16px #ffffff, 0 0 24px #ffffff;
           }
+
+          /* =========================
+             Neon White (para o tema branco)
+             ========================= */
+          .neon-border-light {
+            border: 1px solid #333;
+            box-shadow: 0 0 5px #333;
+            transition: box-shadow 0.3s ease-in-out;
+          }
+          .neon-border-light:hover {
+            box-shadow: 0 0 15px #333;
+          }
+          .neon-text-light {
+            color: #333;
+            text-shadow: 0 0 8px #333, 0 0 16px #333, 0 0 24px #333;
+          }
+
           .animate-g {
             animation: pulseG 3s ease-in-out infinite;
           }
@@ -201,6 +152,58 @@ function Contato() {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
           }
+
+          /* =========================
+             Animação de Pulso Neon no Header
+             ========================= */
+          @keyframes pulseNeon {
+            0% {
+              box-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px rgba(255, 255, 255, 0.8);
+            }
+            100% {
+              box-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px rgba(255, 255, 255, 0.8);
+            }
+          }
+          .pulse-neon {
+            animation: pulseNeon 1.5s infinite alternate ease-in-out;
+          }
+          @keyframes pulseNeonLight {
+            0% {
+              box-shadow: 0 0 5px #333, 0 0 10px #333, 0 0 15px rgba(51, 51, 51, 0.8);
+            }
+            100% {
+              box-shadow: 0 0 10px #333, 0 0 20px #333, 0 0 30px rgba(51, 51, 51, 0.8);
+            }
+          }
+          .pulse-neon-light {
+            animation: pulseNeonLight 1.5s infinite alternate ease-in-out;
+          }
+
+          /* =========================
+             Fade-in
+             ========================= */
+          .fade-in {
+            animation: fadeIn 1.5s ease-out both;
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+
+          /* =========================
+             Ícones Interativos
+             ========================= */
+          .interactive-img {
+            transition: transform 0.3s ease, filter 0.3s ease;
+          }
+          .interactive-img:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+          }
+
+          /* =========================
+             Navegação - Dark
+             ========================= */
           .nav-link {
             position: relative;
             overflow: hidden;
@@ -231,7 +234,7 @@ function Contato() {
           }
 
           /* =========================
-             Header e Navegação - White
+             Navegação - White
              ========================= */
           .nav-link-light {
             position: relative;
@@ -311,10 +314,10 @@ function Contato() {
       </style>
 
       <div className={`h-screen w-screen flex flex-col ${isDark ? 'bg-animated text-white' : 'bg-gradient-to-br from-white to-gray-100 text-gray-900'}`}>
-        {/* Fundo de Estrelas */}
+        {/* Renderiza as estrelas com cor invertida conforme o tema */}
         <Stars isDark={isDark} />
 
-        {/* Header fixo */}
+        {/* Header */}
         <header className={`h-16 sticky top-0 px-4 transition-all duration-300 z-10 ${isDark ? 'bg-black/50 neon-border pulse-neon' : 'bg-white shadow-md border-b border-gray-200'}`}>
           <div className="flex items-center justify-between h-full">
             {/* Logo */}
@@ -328,22 +331,36 @@ function Contato() {
             <div className="w-1/3">
               <nav className="flex justify-center items-center h-full">
                 <ul className="flex space-x-6">
-                  <li className={`text-xl md:text-2xl transition-transform duration-200 hover:scale-110 ${isDark ? 'nav-link' : 'nav-link-light'}`}>
+                  <li className={`
+                      text-xl md:text-2xl transition-transform duration-200 hover:scale-110 
+                      ${isDark ? 'nav-link' : 'nav-link-light'}
+                      ${isHomePage ? (isDark ? 'border-b-2 border-white' : 'border-b-2 border-gray-900') : ''}
+                    `}>
                     <a href="/" className="bg-transparent focus:outline-none">
                       {isEnglish ? "Dev" : "Dev"}
                     </a>
                   </li>
-                  <li className={`text-xl md:text-2xl transition-transform duration-200 hover:scale-110 ${isDark ? 'nav-link' : 'nav-link-light'}`}>
+                  <li className={`
+                      text-xl md:text-2xl transition-transform duration-200 hover:scale-110 
+                      ${isDark ? 'nav-link' : 'nav-link-light'}
+                      ${isDesignPage ? (isDark ? 'border-b-2 border-white' : 'border-b-2 border-gray-900') : ''}
+                    `}>
                     <a href="/design" className="bg-transparent focus:outline-none">
                       {isEnglish ? "Design" : "Design"}
                     </a>
                   </li>
-                  <li className={`text-xl md:text-2xl transition-transform duration-200 hover:scale-110 ${isDark ? 'nav-link' : 'nav-link-light'}`}>
+                  <li className={`
+                      text-xl md:text-2xl transition-transform duration-200 hover:scale-110 
+                      ${isDark ? 'nav-link' : 'nav-link-light'}
+                    `}>
                     <a href="/edicao" className="bg-transparent focus:outline-none">
                       {isEnglish ? "Editing" : "Edição"}
                     </a>
                   </li>
-                  <li className={`text-xl md:text-2xl transition-transform duration-200 hover:scale-110 ${isDark ? 'nav-link' : 'nav-link-light'} ${isContactPage ? (isDark ? 'border-b-2 border-white' : 'border-b-2 border-gray-900') : ''}`}>
+                  <li className={`
+                      text-xl md:text-2xl transition-transform duration-200 hover:scale-110 
+                      ${isDark ? 'nav-link' : 'nav-link-light'}
+                    `}>
                     <a href="/contato" className="bg-transparent focus:outline-none">
                       {isEnglish ? "Contact" : "Contato"}
                     </a>
@@ -425,67 +442,36 @@ function Contato() {
         </header>
 
         {/* Conteúdo Principal */}
-        <main className="flex-1 p-4 flex flex-col items-center justify-center relative z-10 fade-in">
-          <p className="text-lg md:text-xl text-center mb-8">
-            {isEnglish
-              ? "I don't like social media, so these are my only ways to contact me."
-              : "Não gosto de redes sociais, portanto esses são os únicos meios de ter contato comigo"
-            }
-          </p>
-
-          <div className="flex space-x-8">
-            {/* Ícone de Email */}
-            <div onClick={copyEmail} className="relative group cursor-pointer">
-              <div className="contact-icon icon-bg flex items-center justify-center transition-transform duration-300 hover:scale-110">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-16 h-16"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 8l7.89 5.26a1 1 0 001.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-              <span className="tooltip">emailpessoalgustavo06@gmail.com</span>
-              {copiedEmail && (
-                <div className="copied-overlay">
-                  {isEnglish ? "Copied!" : "Copiado!"}
-                </div>
-              )}
+        <main className="flex-1 p-4 flex flex-col justify-center items-center space-y-8 fade-in relative z-10">
+          <section id="design" className="flex flex-col items-center space-y-10 fade-in">
+            <div className="max-w-2xl text-center fade-in">
+              <p className={`text-lg md:text-xl ${isDark ? 'text-white' : 'text-gray-700'}`}>
+                {isEnglish
+                  ? "I have already worked on thumbnails for YouTube and I am proficient in Photoshop, which enables me to create various graphic design pieces. These were some of the works I did for game YouTubers."
+                  : "Já fiz alguns trabalhos de thumbnails para o YouTube, possuo proficiência no Photoshop e consigo realizar muitos trabalhos como designer gráfico. Esses foram alguns dos trabalhos que fiz para youtubers de games."}
+              </p>
             </div>
-
-            {/* Ícone de Discord */}
-            <div onClick={copyDiscord} className="relative group cursor-pointer">
-              <div className="contact-icon icon-bg flex items-center justify-center transition-transform duration-300 hover:scale-110">
-                <svg
-                  role="img"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-16 h-16"
-                  fill="currentColor"
-                >
-                  <title>Discord</title>
-                  <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5153.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2493-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3935-.4058-.874-.6163-1.2493a.077.077 0 00-.0785-.0371 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8858-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0787.0095c.1202.099.2462.1981.372.2924a.077.077 0 01-.0077.1276 12.2986 12.2986 0 01-1.886.8924.0766.0766 0 00-.0407.1067c.3604.699.7719 1.3639 1.226 1.9943a.076.076 0 00.0843.0286c1.961-.6076 3.9495-1.5228 6.0023-3.0294a.0777.0777 0 00.0313-.0552c.5-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1487-1.0857-2.1487-2.419 0-1.3332.9554-2.4189 2.1487-2.4189 1.2108 0 2.1757 1.0952 2.1487 2.4189 0 1.3333-.955 2.419-2.1487 2.419zm7.9748 0c-1.1824 0-2.1486-1.0857-2.1486-2.419 0-1.3332.9551-2.4189 2.1486-2.4189 1.2108 0 2.1758 1.0952 2.1488 2.4189 0 1.3333-.938 2.419-2.1488 2.419Z"/>
-                </svg>
-              </div>
-              <span className="tooltip">freakyzz</span>
-              {copiedDiscord && (
-                <div className="copied-overlay">
-                  {isEnglish ? "Copied!" : "Copiado!"}
-                </div>
-              )}
+            <div className="flex flex-wrap justify-center gap-4 fade-in">
+              <img
+                src={thumbTodoroki}
+                alt="Thumbnail Todoroki"
+                className="interactive-img w-96 h-auto object-cover"
+              />
+              <img
+                src={thumbYone}
+                alt="Thumbnail Yone"
+                className="interactive-img w-96 h-auto object-cover"
+              />
+              <img
+                src={thumbGraves}
+                alt="Thumbnail Graves"
+                className="interactive-img w-96 h-auto object-cover"
+              />
             </div>
-          </div>
+          </section>
         </main>
 
-        {/* Footer */}
-        <footer className="text-center text-gray-500 text-xs py-2 relative z-10">
+        <footer className="text-center text-gray-500 text-xs py-2 fade-in relative z-10">
           &copy; {new Date().getFullYear()} - Gustavo Nunes
         </footer>
       </div>
@@ -493,37 +479,4 @@ function Contato() {
   );
 }
 
-// Fundo de estrelas memorizado com suporte ao tema
-const Stars = React.memo(function Stars({ isDark }) {
-  const numStars = 100;
-  const stars = useMemo(() => {
-    return Array.from({ length: numStars }, (_, i) => ({
-      id: i,
-      top: Math.random() * 100,
-      left: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      animationDelay: Math.random() * 2,
-    }));
-  }, []);
-
-  return (
-    <div className="stars-container">
-      {stars.map((star) => (
-        <div
-          key={star.id}
-          className="star"
-          style={{
-            top: `${star.top}%`,
-            left: `${star.left}%`,
-            width: `${star.size}px`,
-            height: `${star.size}px`,
-            animationDelay: `${star.animationDelay}s`,
-            backgroundColor: isDark ? 'white' : 'black',
-          }}
-        ></div>
-      ))}
-    </div>
-  );
-});
-
-export default Contato;
+export default Design;
