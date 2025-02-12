@@ -36,10 +36,9 @@ function Stars() {
 }
 
 function MiniPortfolio() {
-  // -----------------------------------------------------
-  // 1) Lemos do localStorage se o usuário já tem idioma salvo
-  //    Caso contrário, iniciamos em português (false).
-  // -----------------------------------------------------
+  // -------------------------
+  // Lê do localStorage o idioma
+  // -------------------------
   const [isEnglish, setIsEnglish] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('language') === 'en';
@@ -47,19 +46,17 @@ function MiniPortfolio() {
     return false; // padrão
   });
 
-  // -----------------------------------------------------
-  // 2) Toda vez que "isEnglish" mudar, salvamos no localStorage
-  // -----------------------------------------------------
+  // Sempre que mudar isEnglish, salva novamente
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('language', isEnglish ? 'en' : 'pt');
     }
   }, [isEnglish]);
 
-  // Tema (lua/sol)
+  // Tema (Lua/Sol)
   const [isDark, setIsDark] = useState(true);
 
-  // Detecta a rota atual para destacar "Dev" se for a home
+  // Detecta a rota atual
   const [currentPath, setCurrentPath] = useState("");
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -74,58 +71,16 @@ function MiniPortfolio() {
         {`
           @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
 
-          .neon-border {
-            border: 1px solid #ffffff;
-            box-shadow: 0 0 5px #ffffff;
-            transition: box-shadow 0.3s ease-in-out;
-          }
-          .neon-border:hover {
-            box-shadow: 0 0 15px #ffffff;
-          }
-
-          .neon-text {
-            color: #ffffff;
-            text-shadow: 0 0 8px #ffffff, 0 0 16px #ffffff, 0 0 24px #ffffff;
-          }
-
-          .animate-g {
-            animation: pulseG 3s ease-in-out infinite;
-          }
-          @keyframes pulseG {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-          }
-
-          .fade-in {
-            animation: fadeIn 1.5s ease-out both;
-          }
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-
-          .hexagon-img {
-            width: 200px;
-            height: 200px;
-            clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
-            object-fit: cover;
-            animation: scalePulseHex 3.5s ease-in-out infinite;
-          }
-          @keyframes scalePulseHex {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-          }
-
-          .interactive-img {
-            transition: transform 0.3s ease, filter 0.3s ease;
-          }
-          .interactive-img:hover {
-            transform: scale(1.1);
-            filter: brightness(1.2);
-          }
-
+          /* =========================
+             Fundo e Animação de Estrelas
+             ========================= */
           .bg-animated {
-            background: radial-gradient(ellipse at bottom, rgb(5, 11, 18) 0%, #090a0f 100%);
+            /* Fundo mais escuro e menos azulado, tipo espaço sideral */
+            background: radial-gradient(
+              ellipse at center,
+              #0a0a0a 0%,
+              #000000 100%
+            );
             position: relative;
             overflow: hidden;
           }
@@ -150,6 +105,70 @@ function MiniPortfolio() {
             to { opacity: 0.4; transform: scale(0.8); }
           }
 
+          /* =========================
+             Borda e Texto Neon
+             ========================= */
+          .neon-border {
+            border: 1px solid #ffffff;
+            box-shadow: 0 0 5px #ffffff;
+            transition: box-shadow 0.3s ease-in-out;
+          }
+          .neon-border:hover {
+            box-shadow: 0 0 15px #ffffff;
+          }
+
+          .neon-text {
+            color: #ffffff;
+            text-shadow: 0 0 8px #ffffff, 0 0 16px #ffffff, 0 0 24px #ffffff;
+          }
+          .animate-g {
+            animation: pulseG 3s ease-in-out infinite;
+          }
+          @keyframes pulseG {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+          }
+
+          /* =========================
+             Fade-in
+             ========================= */
+          .fade-in {
+            animation: fadeIn 1.5s ease-out both;
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+
+          /* =========================
+             Imagem Hexagonal
+             ========================= */
+          .hexagon-img {
+            width: 200px;
+            height: 200px;
+            clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
+            object-fit: cover;
+            animation: scalePulseHex 3.5s ease-in-out infinite;
+          }
+          @keyframes scalePulseHex {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+          }
+
+          /* =========================
+             Ícones Interativos
+             ========================= */
+          .interactive-img {
+            transition: transform 0.3s ease, filter 0.3s ease;
+          }
+          .interactive-img:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+          }
+
+          /* =========================
+             Navegação
+             ========================= */
           .nav-link {
             position: relative;
             overflow: hidden;
@@ -179,6 +198,9 @@ function MiniPortfolio() {
             text-shadow: 0 0 8px #ffffff, 0 0 16px #ffffff, 0 0 24px #ffffff;
           }
 
+          /* =========================
+             Ícones de Tema e Idioma
+             ========================= */
           .theme-icon {
             position: relative;
             width: 24px;
@@ -201,7 +223,6 @@ function MiniPortfolio() {
             transform: rotate(-90deg);
           }
 
-          /* Ícones de idioma */
           .language-icon {
             position: relative;
             width: 24px;
@@ -251,13 +272,11 @@ function MiniPortfolio() {
                     `}
                   >
                     <a href="/" className="bg-transparent focus:outline-none">
-                      {/* "Dev" pode continuar igual em ambos idiomas */}
                       {isEnglish ? "Dev" : "Dev"}
                     </a>
                   </li>
                   <li className="text-xl md:text-2xl transition-transform duration-200 hover:scale-110 nav-link">
                     <a href="/design" className="bg-transparent focus:outline-none">
-                      {/* "Design" idem */}
                       {isEnglish ? "Design" : "Design"}
                     </a>
                   </li>
@@ -325,18 +344,15 @@ function MiniPortfolio() {
                     viewBox="0 0 640 480"
                   >
                     <title>Português (BR)</title>
-                    <path fill="#009b3a" d="M0 0h640v480H0z" />
-                    <ellipse
-                      cx="320"
-                      cy="240"
+                    {/* Fundo verde */}
+                    <rect width="640" height="480" fill="#009b3a" />
+                    {/* Losango amarelo */}
+                    <polygon
                       fill="#ffdf00"
-                      rx="180"
-                      ry="180"
+                      points="320,96 544,240 320,384 96,240"
                     />
-                    <path
-                      fill="#002776"
-                      d="M138 240a182 182 0 01364 0 182 182 0 01-364 0"
-                    />
+                    {/* Círculo azul */}
+                    <circle cx="320" cy="240" r="80" fill="#002776" />
                   </svg>
 
                   {/* Bandeira dos EUA => aparece se isEnglish = true */}
@@ -376,14 +392,14 @@ function MiniPortfolio() {
               <p className="text-gray-300 text-lg md:text-xl">
                 {isEnglish ? (
                   <>
-                    I'm Gustavo Nunes, a Computer Science student at UniBH (5th semester). 
-                    I develop front-end solutions for web and mobile using JavaScript, React, TailwindCSS, 
-                    Flutter, and Dart. I also have knowledge in Python and apply agile methodologies (Scrum) 
+                    I'm Gustavo Nunes, a Computer Science student at UniBH (5th semester).
+                    I develop front-end solutions for web and mobile using JavaScript, React, TailwindCSS,
+                    Flutter, and Dart. I also have knowledge in Python and apply agile methodologies (Scrum)
                     for efficient, high-quality deliveries.
                   </>
                 ) : (
                   <>
-                    Sou Gustavo Nunes, estudante de Ciências da Computação no UniBH (5º período).
+                    Gustavo Nunes - estudante de Ciências da Computação no UniBH (5º período).
                     Desenvolvo soluções front-end para web e mobile utilizando JavaScript, React, TailwindCSS,
                     Flutter e Dart. Também tenho conhecimentos em Python e aplico metodologias ágeis (Scrum)
                     para entregas eficientes e de alta qualidade.

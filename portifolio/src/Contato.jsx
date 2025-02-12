@@ -3,17 +3,32 @@ import React, { useState, useMemo, useEffect } from 'react';
 
 function Contato() {
   // --------------------
-  // Estados
+  // Estados de "copiado"
   // --------------------
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedDiscord, setCopiedDiscord] = useState(false);
 
-  // Botão de tema (Lua/Sol)
+  // --------------------
+  // Tema (Lua/Sol)
+  // --------------------
   const [isDark, setIsDark] = useState(true);
 
-  // Botão de idioma (Brasil/EUA)
-  // false => Português | true => Inglês
-  const [isEnglish, setIsEnglish] = useState(false);
+  // --------------------
+  // Idioma (Brasil/EUA) - lê do localStorage
+  // --------------------
+  const [isEnglish, setIsEnglish] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('language') === 'en';
+    }
+    return false; 
+  });
+
+  // Ao mudar isEnglish, salvamos no localStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('language', isEnglish ? 'en' : 'pt');
+    }
+  }, [isEnglish]);
 
   // --------------------
   // Rota atual: /contato?
@@ -24,7 +39,6 @@ function Contato() {
       setCurrentPath(window.location.pathname);
     }
   }, []);
-
   const isContactPage = currentPath === "/contato";
 
   // --------------------
@@ -54,33 +68,23 @@ function Contato() {
 
   return (
     <>
-      {/* Importação do Tailwind via CDN e CSS customizado */}
       <style>
         {`
           @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
 
-          /* Remover scrollbars da página */
-          html, body {
-            overflow: hidden;
-          }
-
-          /* Fundo Espacial e Animação Global */
+          /* =========================
+             Fundo e Animação de Estrelas
+             ========================= */
           .bg-animated {
-            background: radial-gradient(ellipse at bottom, rgb(5, 11, 18) 0%, #090a0f 100%);
+            /* Fundo mais escuro e menos azulado, tipo espaço sideral */
+            background: radial-gradient(
+              ellipse at center,
+              #0a0a0a 0%,
+              #000000 100%
+            );
             position: relative;
             overflow: hidden;
           }
-
-          /* Animação de fadeIn (aplicada somente no main) */
-          .fade-in {
-            animation: fadeIn 1.5s ease-out both;
-          }
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-
-          /* Estrelas Animadas */
           .stars-container {
             position: absolute;
             top: 0;
@@ -102,7 +106,20 @@ function Contato() {
             to { opacity: 0.4; transform: scale(0.8); }
           }
 
-          /* Estilos para os ícones de contato */
+          /* =========================
+             Fade-in
+             ========================= */
+          .fade-in {
+            animation: fadeIn 1.5s ease-out both;
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+
+          /* =========================
+             Ícones de Contato
+             ========================= */
           .contact-icon {
             width: 8rem;
             height: 8rem;
@@ -111,7 +128,6 @@ function Contato() {
             background: #1f2937; /* gray-800 */
             border-radius: 9999px;
           }
-          /* Tooltip: aparece ao passar o mouse */
           .tooltip {
             position: absolute;
             bottom: -2.5rem;
@@ -130,8 +146,6 @@ function Contato() {
           .group:hover .tooltip {
             opacity: 1;
           }
-
-          /* Overlay de texto copiado com animação */
           .copied-overlay {
             position: absolute;
             top: 0;
@@ -155,9 +169,9 @@ function Contato() {
             100% { opacity: 0; transform: scale(1); }
           }
 
-          /* ============================
+          /* =========================
              Header e Navegação
-             ============================ */
+             ========================= */
           .neon-border {
             border: 1px solid #ffffff;
             box-shadow: 0 0 5px #ffffff;
@@ -227,7 +241,9 @@ function Contato() {
             transform: rotate(-90deg);
           }
 
-          /* Ícones de idioma */
+          /* =========================
+             Ícones de idioma
+             ========================= */
           .language-icon {
             position: relative;
             width: 24px;
@@ -256,7 +272,7 @@ function Contato() {
         {/* Fundo de Estrelas */}
         <Stars />
 
-        {/* Header sem fade-in, com leve opacidade */}
+        {/* Header fixo */}
         <header className="h-16 bg-black/50 neon-border sticky top-0 px-4 transition-all duration-300 z-10">
           <div className="flex items-center justify-between h-full">
             {/* Logo */}
@@ -270,8 +286,6 @@ function Contato() {
             <div className="w-1/3">
               <nav className="flex justify-center items-center h-full">
                 <ul className="flex space-x-6">
-                  {/* Links: se quiser traduzir "Dev" e "Design", fique à vontade
-                      Mas aqui só traduziremos "Edição" e "Contato" */}
                   <li className="text-xl md:text-2xl transition-transform duration-200 hover:scale-110 nav-link">
                     <a href="/" className="bg-transparent focus:outline-none">
                       {isEnglish ? "Dev" : "Dev"}
@@ -287,8 +301,6 @@ function Contato() {
                       {isEnglish ? "Editing" : "Edição"}
                     </a>
                   </li>
-
-                  {/* Link para Contato com linha embaixo se estiver na página de contato */}
                   <li
                     className={`
                       text-xl md:text-2xl transition-transform duration-200 hover:scale-110 nav-link
@@ -305,7 +317,7 @@ function Contato() {
 
             {/* Botões no canto direito: Tema + Idioma */}
             <div className="w-1/3 flex justify-end items-center space-x-4">
-              {/* Botão de Troca de Tema */}
+              {/* Troca de Tema */}
               <button
                 onClick={() => setIsDark(!isDark)}
                 className="p-2 focus:outline-none"
@@ -339,35 +351,29 @@ function Contato() {
                 </div>
               </button>
 
-              {/* Botão de Troca de Idioma (Brasil / EUA) */}
+              {/* Troca de Idioma */}
               <button
                 onClick={() => setIsEnglish(!isEnglish)}
                 className="p-2 focus:outline-none"
                 title={isEnglish ? "Switch Language" : "Trocar Idioma"}
               >
                 <div className="language-icon">
-                  {/* Bandeira do Brasil => aparece quando isEnglish = false */}
+                  {/* Bandeira BR (quando isEnglish = false) */}
                   <svg
                     className={!isEnglish ? "active" : "inactive"}
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 640 480"
                   >
                     <title>Português (BR)</title>
-                    <path fill="#009b3a" d="M0 0h640v480H0z" />
-                    <ellipse
-                      cx="320"
-                      cy="240"
+                    <rect width="640" height="480" fill="#009b3a" />
+                    <polygon
                       fill="#ffdf00"
-                      rx="180"
-                      ry="180"
+                      points="320,96 544,240 320,384 96,240"
                     />
-                    <path
-                      fill="#002776"
-                      d="M138 240a182 182 0 01364 0 182 182 0 01-364 0"
-                    />
+                    <circle cx="320" cy="240" r="80" fill="#002776" />
                   </svg>
 
-                  {/* Bandeira dos EUA => aparece quando isEnglish = true */}
+                  {/* Bandeira EUA (quando isEnglish = true) */}
                   <svg
                     className={isEnglish ? "active" : "inactive"}
                     xmlns="http://www.w3.org/2000/svg"
@@ -380,7 +386,6 @@ function Contato() {
                       d="M0 0h7410v390h-7410zm0 780h7410v390h-7410zm0 780h7410v390h-7410zm0 780h7410v390h-7410zm0 780h7410v390h-7410zm0 780h7410v390h-7410z"
                     />
                     <path fill="#3c3b6e" d="M0 0h2960v2100H0z" />
-                    {/* Pequenos astros simplificados (opcional) */}
                   </svg>
                 </div>
               </button>
@@ -388,9 +393,8 @@ function Contato() {
           </div>
         </header>
 
-        {/* Conteúdo Principal (fade-in) */}
+        {/* Conteúdo Principal */}
         <main className="flex-1 p-4 flex flex-col items-center justify-center relative z-10 fade-in">
-          {/* Texto principal */}
           <p className="text-lg md:text-xl text-center mb-8">
             {isEnglish
               ? "I don't like social media, so these are my only ways to contact me."
@@ -439,7 +443,7 @@ function Contato() {
                   <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5153.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2493-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3935-.4058-.874-.6163-1.2493a.077.077 0 00-.0785-.0371 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8858-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0787.0095c.1202.099.2462.1981.372.2924a.077.077 0 01-.0077.1276 12.2986 12.2986 0 01-1.886.8924.0766.0766 0 00-.0407.1067c.3604.699.7719 1.3639 1.226 1.9943a.076.076 0 00.0843.0286c1.961-.6076 3.9495-1.5228 6.0023-3.0294a.0777.0777 0 00.0313-.0552c.5-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1487-1.0857-2.1487-2.419 0-1.3332.9554-2.4189 2.1487-2.4189 1.2108 0 2.1757 1.0952 2.1487 2.4189 0 1.3333-.955 2.419-2.1487 2.419zm7.9748 0c-1.1824 0-2.1486-1.0857-2.1486-2.419 0-1.3332.9551-2.4189 2.1486-2.4189 1.2108 0 2.1758 1.0952 2.1488 2.4189 0 1.3333-.938 2.419-2.1488 2.419Z"/>
                 </svg>
               </div>
-              <span className="tooltip">@freakysz</span>
+              <span className="tooltip">freakyzz</span>
               {copiedDiscord && (
                 <div className="copied-overlay">
                   {isEnglish ? "Copied!" : "Copiado!"}
@@ -449,7 +453,7 @@ function Contato() {
           </div>
         </main>
 
-        {/* Footer sem fade-in */}
+        {/* Footer */}
         <footer className="text-center text-gray-500 text-xs py-2 relative z-10">
           &copy; {new Date().getFullYear()} - Gustavo Nunes
         </footer>
@@ -458,7 +462,7 @@ function Contato() {
   );
 }
 
-// Componente Stars memorizado para não recriar o fundo a cada re-renderização
+// Fundo de estrelas memorizado
 const Stars = React.memo(function Stars() {
   const numStars = 100;
   const stars = useMemo(() => {
@@ -468,7 +472,7 @@ const Stars = React.memo(function Stars() {
       left: Math.random() * 100,
       size: Math.random() * 2 + 1,
       animationDelay: Math.random() * 2,
-    })); 
+    }));
   }, []);
 
   return (
