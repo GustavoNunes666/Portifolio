@@ -273,10 +273,46 @@ function Edicao() {
             opacity: 0;
             transform: rotate(90deg);
           }
+
+          /* Custom Scrollbar para resoluções menores que 1600x900 */
+          @media screen and (max-width: 1599px), screen and (max-height: 899px) {
+            /* Firefox */
+            * {
+              scrollbar-width: thin;
+              scrollbar-color: currentColor transparent;
+            }
+            /* Webkit Browsers */
+            ::-webkit-scrollbar {
+              width: 8px;
+              height: 8px;
+            }
+            ::-webkit-scrollbar-track {
+              background: transparent;
+            }
+            .dark-mode ::-webkit-scrollbar-thumb {
+              background-color: rgba(255, 255, 255, 0.4);
+              border-radius: 4px;
+            }
+            .dark-mode ::-webkit-scrollbar-thumb:hover {
+              background-color: rgba(255, 255, 255, 0.6);
+            }
+            .light-mode ::-webkit-scrollbar-thumb {
+              background-color: rgba(0, 0, 0, 0.4);
+              border-radius: 4px;
+            }
+            .light-mode ::-webkit-scrollbar-thumb:hover {
+              background-color: rgba(0, 0, 0, 0.6);
+            }
+            
+            /* Permite scroll no container principal em modo dark */
+            .bg-animated {
+              overflow-y: auto;
+            }
+          }
         `}
       </style>
 
-      <div className={`h-screen w-screen flex flex-col ${isDark ? 'bg-animated text-white' : 'bg-gradient-to-br from-white to-gray-100 text-gray-900'}`}>
+      <div className={`h-screen w-screen flex flex-col ${isDark ? 'bg-animated text-white dark-mode' : 'bg-gradient-to-br from-white to-gray-100 text-gray-900 light-mode'}`}>
         {/* Estrelas de fundo */}
         <Stars isDark={isDark} />
 
@@ -294,7 +330,6 @@ function Edicao() {
             <div className="w-1/3">
               <nav className="flex justify-center items-center h-full">
                 <ul className="flex space-x-6">
-                  {/* Ordem: Dev, Design, Editing, Contact */}
                   <li className={`text-xl md:text-2xl transition-transform duration-200 hover:scale-110 ${isDark ? 'nav-link' : 'nav-link-light'} ${isHomePage ? (isDark ? 'border-b-2 border-white' : 'border-b-2 border-gray-900') : ''}`}>
                     <a href="/" className="bg-transparent focus:outline-none">
                       {isEnglish ? "Dev" : "Dev"}
@@ -374,14 +409,12 @@ function Edicao() {
                   : "Trabalho com edição de vídeos há muito tempo e sei usar diversos programas para diferentes finalidades e complexidades de vídeo, sendo os principais o Adobe Premiere e o Sony Vegas Pro."}
               </p>
             </div>
-            {/* Texto antes dos vídeos */}
             <div className="max-w-2xl text-center fade-in">
               <p className="text-xl md:text-2xl font-medium">
                 {isEnglish ? "Here are some works I have already done:" : "Segue alguns trabalhos que já fiz:"}
               </p>
             </div>
             <div className="flex flex-wrap justify-center gap-4 fade-in">
-              {/* Vídeo 1 */}
               <div className="w-full md:w-1/2 lg:w-1/3 p-2">
                 <div className="w-full" style={{ height: '250px' }}>
                   <iframe
@@ -394,7 +427,6 @@ function Edicao() {
                   ></iframe>
                 </div>
               </div>
-              {/* Vídeo 2 */}
               <div className="w-full md:w-1/2 lg:w-1/3 p-2">
                 <div className="w-full" style={{ height: '250px' }}>
                   <iframe
@@ -407,7 +439,6 @@ function Edicao() {
                   ></iframe>
                 </div>
               </div>
-              {/* Vídeo 3 */}
               <div className="w-full md:w-1/2 lg:w-1/3 p-2">
                 <div className="w-full" style={{ height: '250px' }}>
                   <iframe
@@ -420,7 +451,6 @@ function Edicao() {
                   ></iframe>
                 </div>
               </div>
-              {/* Vídeo 4 */}
               <div className="w-full md:w-1/2 lg:w-1/3 p-2">
                 <div className="w-full" style={{ height: '250px' }}>
                   <iframe
