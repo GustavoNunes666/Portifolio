@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import thumbTodoroki from './thumb_todoroki.jpg';
 import thumbYone from './thumb_yone.jpg';
 import thumbGraves from './thumb_graves.png';
+import thumbIsagi from './thumb_isagi.png';
+import thumbEscola from './thumb_escola.png';
+import thumbSemRedesocial from './thumb_sem_redesocial.png';
 
 function Stars({ isDark }) {
   const numStars = 100;
@@ -26,7 +29,7 @@ function Stars({ isDark }) {
             width: `${star.size}px`,
             height: `${star.size}px`,
             animationDelay: `${star.animationDelay}s`,
-            backgroundColor: isDark ? 'white' : 'black', // Inverte a cor conforme o tema
+            backgroundColor: isDark ? 'white' : 'black',
           }}
         ></div>
       ))}
@@ -50,15 +53,13 @@ function Design() {
   }, [isEnglish]);
 
   // Tema (true = dark, false = light)
-  // Se houver um valor salvo em localStorage, usaremos ele para definir o tema inicial.
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') !== 'light'; // Se não for 'light', assume dark
+      return localStorage.getItem('theme') !== 'light';
     }
     return true;
   });
 
-  // Sempre que mudar o tema, salva a escolha no localStorage
   useEffect(() => {
     if (typeof window !== 'undefined') {
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
@@ -442,7 +443,7 @@ function Design() {
         </header>
 
         {/* Conteúdo Principal */}
-        <main className="flex-1 p-4 flex flex-col justify-center items-center space-y-8 fade-in relative z-10">
+        <main className="flex-1 p-4 flex flex-col justify-center items-center space-y-8 fade-in relative z-10 overflow-auto">
           <section id="design" className="flex flex-col items-center space-y-10 fade-in">
             <div className="max-w-2xl text-center fade-in">
               <p className={`text-lg md:text-xl ${isDark ? 'text-white' : 'text-gray-700'}`}>
@@ -465,6 +466,21 @@ function Design() {
               <img
                 src={thumbGraves}
                 alt="Thumbnail Graves"
+                className="interactive-img w-96 h-auto object-cover"
+              />
+              <img
+                src={thumbIsagi}
+                alt="Thumbnail Isagi"
+                className="interactive-img w-96 h-auto object-cover"
+              />
+              <img
+                src={thumbEscola}
+                alt="Thumbnail Escola"
+                className="interactive-img w-96 h-auto object-cover"
+              />
+              <img
+                src={thumbSemRedesocial}
+                alt="Thumbnail Sem Redesocial"
                 className="interactive-img w-96 h-auto object-cover"
               />
             </div>
